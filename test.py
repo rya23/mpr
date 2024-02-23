@@ -1,6 +1,8 @@
 import random
 import math
 
+# random.seed(42)
+
 
 class Job:
     def __init__(self, id, time, deadline, holding, penalty):
@@ -32,6 +34,8 @@ class SolveJob(Job):
                 pen = pen + (temp * arr[seq[i]].penalty)
         return hold + pen
 
+    # to swap diffrent combinations
+
     def neighbor(neighbour, arr, t):
         rand = random.random()
         n = len(arr)
@@ -44,7 +48,7 @@ class SolveJob(Job):
                 if SolveJob.solve(arr, b) > SolveJob.solve(arr, neighbour):
                     # print(f"Accepted : {SolveJob.solve(arr, neighbour)}")
                     break
-                elif random.random() < math.exp(-z):
+                elif random.random() < math.exp(-z):  # check for down grading
                     # print(f"Accepted : {SolveJob.solve(arr, neighbour)}")
                     break
                 else:
@@ -52,46 +56,45 @@ class SolveJob(Job):
                     neighbour = b.copy()
 
 
-class Annealing:
-    def main():
-        print("Hello")
-        arr = []
-        n = 0
-        print("1. Manual Input  \t 2. Automatic input")
-        no = int(input())
-        if no == 1:
-            print("Enter number of Jobs to Schedule : ")
-            n = int(input())
-            for i in range(1, n + 1):
-                time = int(input(f"Enter Time for Job {i}: "))
-                deadline = int(input(f"Enter Deadline for Job {i}: "))
-                holding = int(input(f"Enter Holding cost for Job {i}: "))
-                penalty = int(input(f"Enter Penalty for Job {i}: "))
-                arr.append(Job(i, time, deadline, holding, penalty))
-        else:
-            arr.append(Job(1, 10, 15, 3, 10))
-            arr.append(Job(2, 8, 20, 2, 22))
-            arr.append(Job(3, 6, 10, 5, 10))
-            arr.append(Job(4, 7, 30, 4, 8))
-        n = len(arr)
-        neighbour = list(range(n))
-        min_val = SolveJob.solve(arr, neighbour)
-        print(f"Current cost: {min_val}")
-        t = min_val / 2
-        c = 0.9
-        result = [0] * n
+def main():
+    print("Hello")
+    arr = []
+    n = 0
+    print("1. Manual Input  \t 2. Automatic input")
+    no = int(input())
+    if no == 1:
+        print("Enter number of Jobs to Schedule : ")
+        n = int(input())
+        for i in range(1, n + 1):
+            time = int(input(f"Enter Time for Job {i}: "))
+            deadline = int(input(f"Enter Deadline for Job {i}: "))
+            holding = int(input(f"Enter Holding cost for Job {i}: "))
+            penalty = int(input(f"Enter Penalty for Job {i}: "))
+            arr.append(SolveJob(i, time, deadline, holding, penalty))
+    else:
+        arr.append(SolveJob(1, 10, 15, 3, 10))
+        arr.append(SolveJob(2, 8, 20, 2, 22))
+        arr.append(SolveJob(3, 6, 10, 5, 10))
+        arr.append(SolveJob(4, 7, 30, 4, 8))
+    n = len(arr)
+    neighbour = list(range(n))
+    min_cost = SolveJob.solve(arr, neighbour)
+    print(f"Current cost: {min_cost}")
+    t = 1000
+    c = 0.9
+    result = neighbour.copy()
 
-        while t > 1.0:
-            SolveJob.neighbor(neighbour, arr, t)
-            temp = SolveJob.solve(arr, neighbour)
-            t *= c
-            if temp < min_val:
-                min_val = temp
-                result = neighbour.copy()
+    while t > 1.0:
+        SolveJob.neighbor(neighbour, arr, t)
+        temp = SolveJob.solve(arr, neighbour)
+        t *= c
+        if temp < min_cost:
+            min_cost = temp
+            result = neighbour.copy()
+    for i in range(n):
+        print(arr[result[i]])
 
-        for i in range(n):
-            print(arr[i])
+    print(f"Total Cost required: {SolveJob.solve(arr, result)}")
 
-        print(f"Total Cost required: {SolveJob.solve(arr, result)}")
 
-    Annealing.main()
+main()

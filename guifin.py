@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+import test
 
 
 class Job:
@@ -133,5 +134,6 @@ class AnnealingTkinter:
     def run(self):
         self.root.mainloop()
 
-    app = AnnealingTkinter()
-    app.run()
+
+app = AnnealingTkinter()
+app.run()
